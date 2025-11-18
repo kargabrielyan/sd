@@ -1,0 +1,24 @@
+{
+  "name": "superdispatch",
+  "version": "1.0.0",
+  "description": "SuperDispatch login verification system",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js"
+  },
+  "keywords": [
+    "telegram",
+    "login",
+    "verification"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}
+

